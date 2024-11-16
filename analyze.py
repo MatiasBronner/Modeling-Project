@@ -16,11 +16,12 @@ def remove_seed_spaces(team_name):
     i = 0
     # remove seed and weird backslash characters
     while i < len(team_name):
-        if team_name[i] == "(" or "\\":
+        if not team_name[i].isalnum() and not team_name[i]==" ":
             break 
         else:
             output = output + team_name[i]
             i+=1
+            
     # remove trailing whitespaces
     output = list(output)
     i = len(output)-1
@@ -31,7 +32,6 @@ def remove_seed_spaces(team_name):
             del output[i]
             i-=1
     return "".join(output)
-
 
 # Process each team's sheet
 for sheet in team_sheets:
