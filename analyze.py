@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import itertools as it
 
 # Load the dataset
 file_path = 'Basketball_dataset.xlsx'  # Replace with your file path
@@ -97,34 +98,8 @@ for sheet in team_sheets:
         'win_loss_ratio': win_loss_ratio,
         'point_differential': point_differential,
         'total_wins': total_wins,
-        'game0_W/L' : w_l_game_num[0],
-        'game1_W/L' : w_l_game_num[1],
-        'game2_W/L' : w_l_game_num[2],
-        'game3_W/L' : w_l_game_num[3],
-        'game4_W/L' : w_l_game_num[4],
-        'game5_W/L' : w_l_game_num[5],
-        'game6_W/L' : w_l_game_num[6],
-        'game7_W/L' : w_l_game_num[7],
-        'game8_W/L' : w_l_game_num[8],
-        'game9_W/L' : w_l_game_num[9],
-        'game10_W/L' : w_l_game_num[10],
-        'game11_W/L' : w_l_game_num[11],
-        'game12_W/L' : w_l_game_num[12],
-        'game13_W/L' : w_l_game_num[13],
-        'game14_W/L' : w_l_game_num[14],
-        'game15_W/L' : w_l_game_num[15],
-        'game16_W/L' : w_l_game_num[16],
-        'game17_W/L' : w_l_game_num[17],
-        'game18_W/L' : w_l_game_num[18],
-        'game19_W/L' : w_l_game_num[19],
-        'game20_W/L' : w_l_game_num[20],
-        'game21_W/L' : w_l_game_num[21],
-        'game22_W/L' : w_l_game_num[22],
-        'game23_W/L' : w_l_game_num[23],
-        # 'game24_W/L' : w_l_game_num[24],
-        # 'game25_W/L' : w_l_game_num[25],
-        # 'game26_W/L' : w_l_game_num[26],
-        # 'game27_W/L' : w_l_game_num[27],
+        'W/L_list' : w_l_game_num,
+        'point_diff': point_diff,
 
     }
     
@@ -164,9 +139,10 @@ for game in march_madness_games:
     point_diff_diff = team_metrics_team['point_differential'] - team_metrics_opponent['point_differential']
     
     # Append features and target
-    features.append([win_loss_diff, point_diff_diff])
-    targets.append(1 if game['W/L'] == 'W' else 0)
+    features.append([win_loss_diff, point_diff_diff,*team_metrics_team['W/L_list'],
+                     *team_metrics_team['point_diff'],*team_metrics_opponent['W/L_list'],*team_metrics_opponent['point_diff']])
 
+    
 # Convert features and targets to NumPy arrays
 X = np.array(features)
 y = np.array(targets)
