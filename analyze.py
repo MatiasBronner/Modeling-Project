@@ -12,8 +12,8 @@ march_madness_games = []
 
 # remove seed and training whitespace from team names (because inconsistent seeds caused key errors)
 def remove_seed_spaces(team_name):
-    if "NC" in team_name:
-        a =0
+    if "Saint Peter" in team_name:
+        a = 0
     output = ""
     i = 0
     # remove seed and weird backslash characters
@@ -37,6 +37,23 @@ def remove_seed_spaces(team_name):
     # edge case for St vs State. Make all State
     if output[-1] == "t" and output[-2] == "S":
         output = output + "ate"
+    # UCONN vs Connecticut
+    if output == "Connecticut":
+        output = "UConn"
+    # Western Kentucky vs Kentucky
+    if output == "Western Kentucky":
+        output = "Kentucky"
+    # UNC vs North Carolina
+    if output == "North Carolina":
+        output = "UNC"
+    # McNeese State vs McNeese
+    if "McNeese" in output:
+        output = "McNeese"
+    # Fla Atlantic vs Florida Atlantic
+    if "Atlantic" in team_name:
+        output = "Fla Atlantic"
+    if "Brigham" in output:
+        output = "BYU"
     return output
 
 # Process each team's sheet
@@ -91,7 +108,7 @@ for game in march_madness_games:
     # Get metrics for both teams
     team_metrics_team = team_metrics[team]
     for key in team_metrics.keys():
-        if "NC" in key:
+        if "Saint P" in key:
             a = 0
     team_metrics_opponent = team_metrics[opponent]
     
