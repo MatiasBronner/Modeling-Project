@@ -73,6 +73,8 @@ for sheet in team_sheets:
     total_wins = (regular_season['W/L'] == 'W').sum()
     total_games = len(regular_season)
     win_loss_ratio = total_wins / total_games if total_games > 0 else 0
+    if win_loss_ratio < 0:
+        a = 0
     point_differential = (regular_season['Tm'] - regular_season['Opp']).sum()
 
     # Save the metrics
