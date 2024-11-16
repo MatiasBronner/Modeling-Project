@@ -42,7 +42,7 @@ def remove_seed_spaces(team_name):
         output = "UConn"
     # Western Kentucky vs Kentucky
     if output == "Western Kentucky":
-        output = "Kentucky"
+        output = "Western Kentucky"
     # UNC vs North Carolina
     if output == "North Carolina":
         output = "UNC"
@@ -66,7 +66,7 @@ for sheet in team_sheets:
     team_name = remove_seed_spaces(team_name)
 
     # Separate regular season and tournament games
-    regular_season = team_data[team_data['Type'] != 'NCAA']
+    regular_season = team_data[team_data['Type'] == 'REG']
     march_madness = team_data[team_data['Type'] == 'NCAA']
     
     # Compute team metrics (win/loss ratio and point differential) for the regular season
@@ -76,11 +76,42 @@ for sheet in team_sheets:
     if win_loss_ratio < 0:
         a = 0
     point_differential = (regular_season['Tm'] - regular_season['Opp']).sum()
+    total_points_for = regular_season['Tm']
 
     # Save the metrics
     team_metrics[team_name] = {
         'win_loss_ratio': win_loss_ratio,
-        'point_differential': point_differential
+        'point_differential': point_differential,
+        'total_wins': total_wins,
+        'game1_W/L' : (regular_season['W/L'] == 'W')[1],
+        'game2_W/L' : (regular_season['W/L'] == 'W')[2],
+        'game3_W/L' : (regular_season['W/L'] == 'W')[3],
+        'game4_W/L' : (regular_season['W/L'] == 'W')[4],
+        'game5_W/L' : (regular_season['W/L'] == 'W')[5],
+        'game6_W/L' : (regular_season['W/L'] == 'W')[6],
+        'game7_W/L' : (regular_season['W/L'] == 'W')[7],
+        'game8_W/L' : (regular_season['W/L'] == 'W')[8],
+        'game9_W/L' : (regular_season['W/L'] == 'W')[9],
+        'game10_W/L' : (regular_season['W/L'] == 'W')[10],
+        'game11_W/L' : (regular_season['W/L'] == 'W')[11],
+        'game12_W/L' : (regular_season['W/L'] == 'W')[12],
+        'game13_W/L' : (regular_season['W/L'] == 'W')[13],
+        'game14_W/L' : (regular_season['W/L'] == 'W')[14],
+        'game15_W/L' : (regular_season['W/L'] == 'W')[15],
+        'game16_W/L' : (regular_season['W/L'] == 'W')[16],
+        'game17_W/L' : (regular_season['W/L'] == 'W')[17],
+        'game18_W/L' : (regular_season['W/L'] == 'W')[18],
+        'game19_W/L' : (regular_season['W/L'] == 'W')[19],
+        'game20_W/L' : (regular_season['W/L'] == 'W')[20],
+        'game21_W/L' : (regular_season['W/L'] == 'W')[21],
+        'game22_W/L' : (regular_season['W/L'] == 'W')[22],
+        'game23_W/L' : (regular_season['W/L'] == 'W')[23],
+        'game24_W/L' : (regular_season['W/L'] == 'W')[24],
+        'game25_W/L' : (regular_season['W/L'] == 'W')[25],
+        'game26_W/L' : (regular_season['W/L'] == 'W')[26],
+        'game27_W/L' : (regular_season['W/L'] == 'W')[27],
+        'game28_W/L' : (regular_season['W/L'] == 'W')[28],
+
     }
     
     # Append March Madness games to the list
