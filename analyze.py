@@ -12,6 +12,8 @@ march_madness_games = []
 
 # remove seed and training whitespace from team names (because inconsistent seeds caused key errors)
 def remove_seed_spaces(team_name):
+    if "NC" in team_name:
+        a =0
     output = ""
     i = 0
     # remove seed and weird backslash characters
@@ -31,7 +33,11 @@ def remove_seed_spaces(team_name):
         else:
             del output[i]
             i-=1
-    return "".join(output)
+    output = "".join(output)
+    # edge case for St vs State. Make all State
+    if output[-1] == "t" and output[-2] == "S":
+        output = output + "ate"
+    return output
 
 # Process each team's sheet
 for sheet in team_sheets:
@@ -84,6 +90,9 @@ for game in march_madness_games:
     
     # Get metrics for both teams
     team_metrics_team = team_metrics[team]
+    for key in team_metrics.keys():
+        if "NC" in key:
+            a = 0
     team_metrics_opponent = team_metrics[opponent]
     
     # Calculate feature differences
