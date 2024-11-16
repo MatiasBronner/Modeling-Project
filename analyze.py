@@ -1,6 +1,16 @@
 import numpy as np
 import pandas as pd
-import itertools as it
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+
 
 # Load the dataset
 file_path = 'Basketball_dataset.xlsx'  # Replace with your file path
@@ -42,8 +52,8 @@ def remove_seed_spaces(team_name):
     if output == "Connecticut":
         output = "UConn"
     # Western Kentucky vs Kentucky
-    if output == "Western Kentucky":
-        output = "Kentucky"
+    if output == "Kentucky":
+        output = "Western Kentucky"
     # UNC vs North Carolina
     if output == "North Carolina":
         output = "UNC"
@@ -82,7 +92,6 @@ for sheet in team_sheets:
     w_l_game_num = []
     point_diff = []
     for i in range(0,24):
-        print(team_name)
         point_diff.append((regular_season['Tm'] - regular_season['Opp'])[i])
 
         if (regular_season['W/L'] == 'W')[i]:
@@ -152,3 +161,54 @@ np.savetxt('X_matrix.csv', X, delimiter=',', header='Win/Loss Ratio Diff,Point D
 np.savetxt('y_vector.csv', y, delimiter=',', header='Outcome', comments='')
 
 print("X and y matrices are ready!")
+
+def create_model(isNN):
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    if isNN:
+        # Build the neural network model
+        model = Sequential([
+            Dense(64, input_dim=X_train.shape[1], activation='relu'),  # First hidden layer
+            Dropout(0.3),  # Dropout layer to prevent overfitting
+            Dense(32, activation='relu'),  # Second hidden layer
+            Dropout(0.3),
+            Dense(1, activation='sigmoid')  # Output layer with sigmoid activation for binary classification
+        ])
+
+        # Compile the model
+        model.compile(optimizer=Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
+
+        # Train the model
+        history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, verbose=1)
+
+        # Evaluate the model on the test set
+        y_pred = (model.predict(X_test) > 0.5).astype(int)
+
+        # Calculate evaluation metrics
+        accuracy = accuracy_score(y_test, y_pred)
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        report = classification_report(y_test, y_pred)
+    else:
+        # Create a pipeline with polynomial features and logistic regression
+        degree = 3  # You can experiment with different degrees
+        model = Pipeline([
+            ('poly', PolynomialFeatures(degree=degree)),
+            ('logistic', LogisticRegression(penalty = 'l2',C=5.0))
+        ])
+
+        # Train the model
+        model.fit(X_train, y_train)
+
+        # Predict on the test set
+        y_pred = model.predict(X_test)
+
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        report = classification_report(y_test, y_pred)
+
+    print("Model Accuracy:", accuracy)
+    print("Confusion Matrix:\n", conf_matrix)
+    print("Classification Report:\n", report)
+
+create_model(True)
