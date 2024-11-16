@@ -1,5 +1,11 @@
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
 
 # Load the dataset
 file_path = 'Basketball_dataset.xlsx'  # Replace with your file path
@@ -41,7 +47,7 @@ def remove_seed_spaces(team_name):
     if output == "Connecticut":
         output = "UConn"
     # Western Kentucky vs Kentucky
-    if output == "Western Kentucky":
+    if output == "Kentucky":
         output = "Western Kentucky"
     # UNC vs North Carolina
     if output == "North Carolina":
@@ -66,51 +72,20 @@ for sheet in team_sheets:
     team_name = remove_seed_spaces(team_name)
 
     # Separate regular season and tournament games
-    regular_season = team_data[team_data['Type'] == 'REG']
+    regular_season = team_data[team_data['Type'] != 'NCAA']
     march_madness = team_data[team_data['Type'] == 'NCAA']
     
     # Compute team metrics (win/loss ratio and point differential) for the regular season
     total_wins = (regular_season['W/L'] == 'W').sum()
     total_games = len(regular_season)
     win_loss_ratio = total_wins / total_games if total_games > 0 else 0
-    if win_loss_ratio < 0:
-        a = 0
-    point_differential = (regular_season['Tm'] - regular_season['Opp']).sum()
-    total_points_for = regular_season['Tm']
-
+    avg_point_differential = (regular_season['Tm'] - regular_season['Opp']).sum()/total_games
+    
     # Save the metrics
     team_metrics[team_name] = {
         'win_loss_ratio': win_loss_ratio,
-        'point_differential': point_differential,
-        'total_wins': total_wins,
-        'game1_W/L' : (regular_season['W/L'] == 'W')[1],
-        'game2_W/L' : (regular_season['W/L'] == 'W')[2],
-        'game3_W/L' : (regular_season['W/L'] == 'W')[3],
-        'game4_W/L' : (regular_season['W/L'] == 'W')[4],
-        'game5_W/L' : (regular_season['W/L'] == 'W')[5],
-        'game6_W/L' : (regular_season['W/L'] == 'W')[6],
-        'game7_W/L' : (regular_season['W/L'] == 'W')[7],
-        'game8_W/L' : (regular_season['W/L'] == 'W')[8],
-        'game9_W/L' : (regular_season['W/L'] == 'W')[9],
-        'game10_W/L' : (regular_season['W/L'] == 'W')[10],
-        'game11_W/L' : (regular_season['W/L'] == 'W')[11],
-        'game12_W/L' : (regular_season['W/L'] == 'W')[12],
-        'game13_W/L' : (regular_season['W/L'] == 'W')[13],
-        'game14_W/L' : (regular_season['W/L'] == 'W')[14],
-        'game15_W/L' : (regular_season['W/L'] == 'W')[15],
-        'game16_W/L' : (regular_season['W/L'] == 'W')[16],
-        'game17_W/L' : (regular_season['W/L'] == 'W')[17],
-        'game18_W/L' : (regular_season['W/L'] == 'W')[18],
-        'game19_W/L' : (regular_season['W/L'] == 'W')[19],
-        'game20_W/L' : (regular_season['W/L'] == 'W')[20],
-        'game21_W/L' : (regular_season['W/L'] == 'W')[21],
-        'game22_W/L' : (regular_season['W/L'] == 'W')[22],
-        'game23_W/L' : (regular_season['W/L'] == 'W')[23],
-        'game24_W/L' : (regular_season['W/L'] == 'W')[24],
-        'game25_W/L' : (regular_season['W/L'] == 'W')[25],
-        'game26_W/L' : (regular_season['W/L'] == 'W')[26],
-        'game27_W/L' : (regular_season['W/L'] == 'W')[27],
-        'game28_W/L' : (regular_season['W/L'] == 'W')[28],
+        'point_differential': avg_point_differential,
+        'total_wins': total_wins
 
     }
     
@@ -162,3 +137,28 @@ np.savetxt('X_matrix.csv', X, delimiter=',', header='Win/Loss Ratio Diff,Point D
 np.savetxt('y_vector.csv', y, delimiter=',', header='Outcome', comments='')
 
 print("X and y matrices are ready!")
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a pipeline with polynomial features and logistic regression
+degree = 4  # You can experiment with different degrees
+model = Pipeline([
+    ('poly', PolynomialFeatures(degree=degree)),
+    ('logistic', LogisticRegression())
+])
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+
+print("Model Accuracy:", accuracy)
+print("Confusion Matrix:\n", conf_matrix)
+print("Classification Report:\n", report)
