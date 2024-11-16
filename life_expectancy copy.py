@@ -23,14 +23,6 @@ def corr(X: np.ndarray, feature_names: list[str]):
         - feature_names: Names of the features (list of strings)
     """
     # TODO: Calculate the correlation
-    print("Two correlated variables are " + feature_names[2] + " and " + feature_names[8])
-    print("Two correlated variables are " + feature_names[4] + " and " + feature_names[13])
-    print("Two correlated variables are " + feature_names[15] + " and " + feature_names[16])
-    print("Two correlated variables are " + feature_names[17] + " and " + feature_names[18])
-    print("Two correlated variables are " + feature_names[14] + " and " + feature_names[2])
-    print("Two negatively correlated variables are " + feature_names[1] + " and " + feature_names[17])
-    print("Two features that are positively correlated with life expectany are " + feature_names[17] + " at .888 and " + feature_names[18] + " at .792")
-    print("Two features that are negatively correlated with life expectany are " + feature_names[1] + " at -.771 and " + feature_names[11] + " at -.620")
     
 
     correlation = np.corrcoef(X.T)
