@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
+import math
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
@@ -92,7 +91,7 @@ for sheet in team_sheets:
     w_l_game_num = []
     point_diff = []
     for i in range(0,24):
-        point_diff.append((regular_season['Tm'] - regular_season['Opp'])[i])
+        point_diff.append(regular_season['Tm'][i] - regular_season['Opp'][i])
 
         if (regular_season['W/L'] == 'W')[i]:
             w_l_game_num.append(1)
@@ -151,11 +150,13 @@ for game in march_madness_games:
     features.append([win_loss_diff, point_diff_diff,*team_metrics_team['W/L_list'],*team_metrics_team['point_diff'],
                      *team_metrics_opponent['W/L_list'],*team_metrics_opponent['point_diff']])
 
+    targets.append(1 if game['W/L'] == 'W' else 0)
     
 # Convert features and targets to NumPy arrays
 X = np.array(features)
 y = np.array(targets)
-
+print("X.shape " +str(X.shape))
+print("y.shape " + str(y.shape))
 # Save the processed data (optional)
 np.savetxt('X_matrix.csv', X, delimiter=',', header='Win/Loss Ratio Diff,Point Differential Diff', comments='')
 np.savetxt('y_vector.csv', y, delimiter=',', header='Outcome', comments='')
@@ -190,7 +191,7 @@ def create_model(isNN):
         report = classification_report(y_test, y_pred)
     else:
         # Create a pipeline with polynomial features and logistic regression
-        degree = 3  # You can experiment with different degrees
+        degree = 4  # You can experiment with different degrees
         model = Pipeline([
             ('poly', PolynomialFeatures(degree=degree)),
             ('logistic', LogisticRegression(penalty = 'l2',C=5.0))
@@ -211,4 +212,4 @@ def create_model(isNN):
     print("Confusion Matrix:\n", conf_matrix)
     print("Classification Report:\n", report)
 
-create_model(True)
+create_model(False)
