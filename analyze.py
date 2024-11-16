@@ -6,6 +6,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+
 
 # Load the dataset
 file_path = 'Basketball_dataset.xlsx'  # Replace with your file path
@@ -74,18 +79,62 @@ for sheet in team_sheets:
     # Separate regular season and tournament games
     regular_season = team_data[team_data['Type'] != 'NCAA']
     march_madness = team_data[team_data['Type'] == 'NCAA']
+    conference_games = team_data[team_data['Type'] == 'CTOURN']
     
     # Compute team metrics (win/loss ratio and point differential) for the regular season
     total_wins = (regular_season['W/L'] == 'W').sum()
     total_games = len(regular_season)
     win_loss_ratio = total_wins / total_games if total_games > 0 else 0
-    avg_point_differential = (regular_season['Tm'] - regular_season['Opp']).sum()/total_games
+    if win_loss_ratio < 0:
+        a = 0
+    point_differential = (regular_season['Tm'] - regular_season['Opp']).sum()
+    total_points_for = regular_season['Tm']
+    w_l_game_num = []
+    point_diff = []
+    for i in range(0,24):
+        point_diff.append((regular_season['Tm'] - regular_season['Opp'])[i])
+
+        if (regular_season['W/L'] == 'W')[i]:
+            w_l_game_num.append(1)
+        else:
+            w_l_game_num.append(0)
     
+        
+    
+        
     # Save the metrics
     team_metrics[team_name] = {
         'win_loss_ratio': win_loss_ratio,
-        'point_differential': avg_point_differential,
-        'total_wins': total_wins
+        'point_differential': point_differential,
+        'total_wins': total_wins,
+        'game0_W/L' : w_l_game_num[0],
+        'game1_W/L' : w_l_game_num[1],
+        'game2_W/L' : w_l_game_num[2],
+        'game3_W/L' : w_l_game_num[3],
+        'game4_W/L' : w_l_game_num[4],
+        'game5_W/L' : w_l_game_num[5],
+        'game6_W/L' : w_l_game_num[6],
+        'game7_W/L' : w_l_game_num[7],
+        'game8_W/L' : w_l_game_num[8],
+        'game9_W/L' : w_l_game_num[9],
+        'game10_W/L' : w_l_game_num[10],
+        'game11_W/L' : w_l_game_num[11],
+        'game12_W/L' : w_l_game_num[12],
+        'game13_W/L' : w_l_game_num[13],
+        'game14_W/L' : w_l_game_num[14],
+        'game15_W/L' : w_l_game_num[15],
+        'game16_W/L' : w_l_game_num[16],
+        'game17_W/L' : w_l_game_num[17],
+        'game18_W/L' : w_l_game_num[18],
+        'game19_W/L' : w_l_game_num[19],
+        'game20_W/L' : w_l_game_num[20],
+        'game21_W/L' : w_l_game_num[21],
+        'game22_W/L' : w_l_game_num[22],
+        'game23_W/L' : w_l_game_num[23],
+        # 'game24_W/L' : w_l_game_num[24],
+        # 'game25_W/L' : w_l_game_num[25],
+        # 'game26_W/L' : w_l_game_num[26],
+        # 'game27_W/L' : w_l_game_num[27],
 
     }
     
@@ -138,27 +187,53 @@ np.savetxt('y_vector.csv', y, delimiter=',', header='Outcome', comments='')
 
 print("X and y matrices are ready!")
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+def create_model(isNN):
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    if isNN:
+        # Build the neural network model
+        model = Sequential([
+            Dense(64, input_dim=X_train.shape[1], activation='relu'),  # First hidden layer
+            Dropout(0.3),  # Dropout layer to prevent overfitting
+            Dense(32, activation='relu'),  # Second hidden layer
+            Dropout(0.3),
+            Dense(1, activation='sigmoid')  # Output layer with sigmoid activation for binary classification
+        ])
 
-# Create a pipeline with polynomial features and logistic regression
-degree = 4  # You can experiment with different degrees
-model = Pipeline([
-    ('poly', PolynomialFeatures(degree=degree)),
-    ('logistic', LogisticRegression())
-])
+        # Compile the model
+        model.compile(optimizer=Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
 
-# Train the model
-model.fit(X_train, y_train)
+        # Train the model
+        history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, verbose=1)
 
-# Predict on the test set
-y_pred = model.predict(X_test)
+        # Evaluate the model on the test set
+        y_pred = (model.predict(X_test) > 0.5).astype(int)
 
-# Evaluate the model
-accuracy = accuracy_score(y_test, y_pred)
-conf_matrix = confusion_matrix(y_test, y_pred)
-report = classification_report(y_test, y_pred)
+        # Calculate evaluation metrics
+        accuracy = accuracy_score(y_test, y_pred)
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        report = classification_report(y_test, y_pred)
+    else:
+        # Create a pipeline with polynomial features and logistic regression
+        degree = 3  # You can experiment with different degrees
+        model = Pipeline([
+            ('poly', PolynomialFeatures(degree=degree)),
+            ('logistic', LogisticRegression(penalty = 'l2',C=5.0))
+        ])
 
-print("Model Accuracy:", accuracy)
-print("Confusion Matrix:\n", conf_matrix)
-print("Classification Report:\n", report)
+        # Train the model
+        model.fit(X_train, y_train)
+
+        # Predict on the test set
+        y_pred = model.predict(X_test)
+
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        report = classification_report(y_test, y_pred)
+
+    print("Model Accuracy:", accuracy)
+    print("Confusion Matrix:\n", conf_matrix)
+    print("Classification Report:\n", report)
+
+create_model(True)
