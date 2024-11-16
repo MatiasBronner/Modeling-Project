@@ -1,0 +1,36 @@
+G,Date,Type,Opponent,,Tm,Opp
+1,Mon Nov 6 2023,REG,Merrimack,W,67,55
+2,Sat Nov 11 2023,REG,SUNY-Plattsburgh,W,92,41
+3,Thu Nov 16 2023,REG,College of Charleston,W,73,64
+4,Fri Nov 17 2023,REG,Saint Louis,W,78,68
+5,Sun Nov 19 2023,REG,Liberty,L,61,71
+6,Wed Nov 22 2023,REG,Vermont State–Johnson,W,106,57
+7,Sat Nov 25 2023,REG,Bradley,L,70,79
+8,Wed Nov 29 2023,REG,Dartmouth,W,64,53
+9,Sat Dec 2 2023,REG,Yale,W,66,65
+10,Wed Dec 6 2023,REG,Northeastern,W,73,71
+11,Sat Dec 9 2023,REG,Colgate,L,71,77
+12,Sat Dec 16 2023,REG,Virginia Tech,L,51,73
+13,Wed Dec 20 2023,REG,Toledo,W,86,60
+14,Fri Dec 22 2023,REG,Miami (OH),L,69,70
+15,Tue Jan 2 2024,REG,Brown,W,71,70
+16,Sat Jan 6 2024,REG,Maine,W,65,58
+17,Thu Jan 11 2024,REG,Maryland-Baltimore County,W,77,72
+18,Sat Jan 13 2024,REG,NJIT,W,76,55
+19,Thu Jan 18 2024,REG,Binghamton,W,82,62
+20,Thu Jan 25 2024,REG,Massachusetts-Lowell,W,72,65
+21,Sat Jan 27 2024,REG,Bryant,W,67,57
+22,Thu Feb 1 2024,REG,Albany (NY),W,81,59
+23,Sat Feb 3 2024,REG,Binghamton,W,62,49
+24,Thu Feb 8 2024,REG,NJIT,L,61,63
+25,Sat Feb 10 2024,REG,Maryland-Baltimore County,W,72,70
+26,Thu Feb 15 2024,REG,New Hampshire,W,70,54
+27,Sat Feb 17 2024,REG,Maine,W,68,57
+28,Thu Feb 22 2024,REG,Albany (NY),W,94,80
+29,Sat Feb 24 2024,REG,Bryant,W,65,48
+30,Sat Mar 2 2024,REG,Massachusetts-Lowell,W,74,62
+31,Tue Mar 5 2024,REG,New Hampshire,W,68,64
+32,Sat Mar 9 2024,CTOURN,Albany (NY),W,75,72
+33,Tue Mar 12 2024,CTOURN,New Hampshire,W,66,59
+34,Sat Mar 16 2024,CTOURN,Massachusetts-Lowell,W,66,61
+35,Fri Mar 22 2024,NCAA,Duke (13),L,47,64

@@ -1,0 +1,36 @@
+G,Date,Type,Opponent,,Tm,Opp
+1,Mon Nov 6 2023,REG,Iona,W,71,69
+2,Fri Nov 10 2023,REG,Duquesne,L,72,90
+3,Thu Nov 16 2023,REG,Vermont,L,64,73
+4,Fri Nov 17 2023,REG,Wyoming,L,60,67
+5,Sun Nov 19 2023,REG,Coastal Carolina,W,80,72
+6,Sun Nov 26 2023,REG,Kent State,W,84,78
+7,Fri Dec 1 2023,REG,Liberty,W,76,67
+8,Sat Dec 2 2023,REG,Florida Atlantic (13),L,74,90
+9,Sun Dec 10 2023,REG,Rhode Island,W,85,70
+10,Thu Dec 14 2023,REG,The Citadel,W,86,71
+11,Mon Dec 18 2023,REG,Coastal Carolina,W,84,81
+12,Thu Dec 21 2023,REG,Saint Joseph's,W,89,82
+13,Fri Dec 29 2023,REG,Montreat,W,96,59
+14,Thu Jan 4 2024,REG,Hofstra,W,73,61
+15,Sat Jan 6 2024,REG,Stony Brook,W,93,87
+16,Thu Jan 11 2024,REG,Elon,W,80,62
+17,Sat Jan 13 2024,REG,Monmouth,W,94,83
+18,Thu Jan 18 2024,REG,Towson,L,78,82
+19,Sat Jan 20 2024,REG,UNC Wilmington,L,69,78
+20,Thu Jan 25 2024,REG,Hampton,W,107,86
+21,Sat Jan 27 2024,REG,Campbell,W,90,67
+22,Thu Feb 1 2024,REG,UNC Wilmington,L,74,80
+23,Sat Feb 3 2024,REG,William & Mary,W,84,83
+24,Thu Feb 8 2024,REG,North Carolina A&T,W,80,58
+25,Sat Feb 10 2024,REG,Drexel,W,80,70
+26,Thu Feb 15 2024,REG,Northeastern,W,77,73
+27,Mon Feb 19 2024,REG,William & Mary,W,65,57
+28,Thu Feb 22 2024,REG,Delaware,W,90,71
+29,Sat Feb 24 2024,REG,Towson,W,72,56
+30,Thu Feb 29 2024,REG,Campbell,W,96,73
+31,Sat Mar 2 2024,REG,Hofstra,W,87,76
+32,Sun Mar 10 2024,CTOURN,Monmouth,W,83,59
+33,Mon Mar 11 2024,CTOURN,Towson,W,61,56
+34,Tue Mar 12 2024,CTOURN,Stony Brook,W,82,79
+35,Fri Mar 22 2024,NCAA,Alabama (19),L,96,109
