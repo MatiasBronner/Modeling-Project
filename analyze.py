@@ -22,8 +22,6 @@ march_madness_games = []
 
 # remove seed and training whitespace from team names (because inconsistent seeds caused key errors)
 def remove_seed_spaces(team_name):
-    if "Saint Peter" in team_name:
-        a = 0
     output = ""
     i = 0
     # remove seed and weird backslash characters
@@ -78,7 +76,6 @@ for sheet in team_sheets:
     # Separate regular season and tournament games
     regular_season = team_data[team_data['Type'] != 'NCAA']
     march_madness = team_data[team_data['Type'] == 'NCAA']
-    conference_games = team_data[team_data['Type'] == 'CTOURN']
     
     # Compute team metrics (win/loss ratio and point differential) for the regular season
     total_wins = (regular_season['W/L'] == 'W').sum()
@@ -137,9 +134,7 @@ for game in march_madness_games:
     
     # Get metrics for both teams
     team_metrics_team = team_metrics[team]
-    for key in team_metrics.keys():
-        if "Saint P" in key:
-            a = 0
+    
     team_metrics_opponent = team_metrics[opponent]
     
     # Calculate feature differences
@@ -169,12 +164,12 @@ def create_model(isNN):
     if isNN:
         # Build the neural network model
         model = Sequential([
-            Dense(64, input_dim=X_train.shape[1], activation='relu'),  # First hidden layer
-            Dropout(0.2),  # Dropout layer to prevent overfitting
-            Dense(16,activation="relu"),
-            Dropout(0.2),
-            Dense(8, activation='relu'),
-            Dropout(0.2),
+            Dense(100, input_dim=X_train.shape[1], activation='relu'),  # First hidden layer
+            Dropout(0.5),  # Dropout layer to prevent overfitting
+            Dense(50,activation="relu"),
+            Dropout(0.5),
+            Dense(20, activation='relu'),
+            Dropout(0.5),
             Dense(1, activation='sigmoid')  # Output layer with sigmoid activation for binary classification
         ])
 
@@ -182,7 +177,7 @@ def create_model(isNN):
         model.compile(optimizer=Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
 
         # Train the model
-        history = model.fit(X_train, y_train, epochs=3000, batch_size=32, validation_split=0.2, verbose=1)
+        history = model.fit(X_train, y_train, epochs=1500, batch_size=32, validation_split=0., verbose=1)
 
         # Evaluate the model on the test set
         y_pred = (model.predict(X_test) > 0.5).astype(int)
