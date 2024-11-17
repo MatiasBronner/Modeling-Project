@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
+from sklearn.model_selection import KFold
 
 
 # Load the dataset
@@ -163,53 +164,73 @@ np.savetxt('y_vector.csv', y, delimiter=',', header='Outcome', comments='')
 
 print("X and y matrices are ready!")
 
-def create_model(isNN):
-    # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    if isNN:
-        # Build the neural network model
-        model = Sequential([
-            Dense(64, input_dim=X_train.shape[1], activation='relu'),  # First hidden layer
-            Dropout(0.3),  # Dropout layer to prevent overfitting
-            Dense(32, activation='relu'),  # Second hidden layer
-            Dropout(0.3),
-            Dense(1, activation='sigmoid')  # Output layer with sigmoid activation for binary classification
-        ])
+def create_model(isNN, n_splits=5):
+    # Initialize KFold
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+    
+    fold_accuracies = []
+    fold_conf_matrices = []
+    fold_reports = []
 
-        # Compile the model
-        model.compile(optimizer=Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
+    for fold, (train_index, test_index) in enumerate(kf.split(X)):
+        # Split the data into train and validation for this fold
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
 
-        # Train the model
-        history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, verbose=1)
+        print(f"Fold {fold+1}/{n_splits}")
+        
+        if isNN:
+            # Build the neural network model
+            model = Sequential([
+                Dense(64, input_dim=X_train.shape[1], activation='relu'),
+                Dropout(0.2),
+                Dense(16, activation='relu'),
+                Dropout(0.2),
+                Dense(8, activation='relu'),
+                Dropout(0.2),
+                Dense(1, activation='sigmoid')
+            ])
 
-        # Evaluate the model on the test set
-        y_pred = (model.predict(X_test) > 0.5).astype(int)
+            # Compile the model
+            model.compile(optimizer=Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
 
-        # Calculate evaluation metrics
-        accuracy = accuracy_score(y_test, y_pred)
-        conf_matrix = confusion_matrix(y_test, y_pred)
-        report = classification_report(y_test, y_pred)
-    else:
-        # Create a pipeline with polynomial features and logistic regression
-        degree = 4  # You can experiment with different degrees
-        model = Pipeline([
-            ('poly', PolynomialFeatures(degree=degree)),
-            ('logistic', LogisticRegression(penalty = 'l2',C=5.0))
-        ])
+            # Train the model
+            model.fit(X_train, y_train, epochs=2000, batch_size=32, verbose=0)
 
-        # Train the model
-        model.fit(X_train, y_train)
+            # Predict on the validation set
+            y_pred = (model.predict(X_test) > 0.5).astype(int)
+        else:
+            # Create a pipeline with polynomial features and logistic regression
+            degree = 4
+            model = Pipeline([
+                ('poly', PolynomialFeatures(degree=degree)),
+                ('logistic', LogisticRegression(penalty='l2', C=5.0))
+            ])
 
-        # Predict on the test set
-        y_pred = model.predict(X_test)
+            # Train the model
+            model.fit(X_train, y_train)
+
+            # Predict on the validation set
+            y_pred = model.predict(X_test)
 
         # Evaluate the model
         accuracy = accuracy_score(y_test, y_pred)
         conf_matrix = confusion_matrix(y_test, y_pred)
-        report = classification_report(y_test, y_pred)
+        report = classification_report(y_test, y_pred, output_dict=True)  # Store as a dict for averaging
 
-    print("Model Accuracy:", accuracy)
-    print("Confusion Matrix:\n", conf_matrix)
-    print("Classification Report:\n", report)
+        fold_accuracies.append(accuracy)
+        fold_conf_matrices.append(conf_matrix)
+        fold_reports.append(report)
 
-create_model(False)
+        print(f"Fold {fold+1} Accuracy: {accuracy}")
+
+    # Calculate average metrics across folds
+    avg_accuracy = np.mean(fold_accuracies)
+    print(f"\nAverage Accuracy across {n_splits} folds: {avg_accuracy}")
+
+    # Optionally, you can calculate average confusion matrix or detailed metrics
+    # Example: Average confusion matrix
+    avg_conf_matrix = np.mean(fold_conf_matrices, axis=0)
+    print(f"Average Confusion Matrix:\n{avg_conf_matrix}")
+
+create_model(True)
