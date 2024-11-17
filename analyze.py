@@ -148,8 +148,8 @@ for game in march_madness_games:
     point_diff_diff = team_metrics_team['point_differential'] - team_metrics_opponent['point_differential']
     
     # Append features and target
-    features.append([win_loss_diff, point_diff_diff,*team_metrics_team['W/L_list'],
-                     *team_metrics_team['point_diff'],*team_metrics_opponent['W/L_list'],*team_metrics_opponent['point_diff']])
+    features.append([win_loss_diff, point_diff_diff,*team_metrics_team['W/L_list'],*team_metrics_team['point_diff'],
+                     *team_metrics_opponent['W/L_list'],*team_metrics_opponent['point_diff']])
 
     targets.append(1 if game['W/L'] == 'W' else 0)
     
